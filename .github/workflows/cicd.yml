@@ -13,10 +13,10 @@ on:
 
   # Environment Variables
 env:
-  PACKAGE_REGISTRY_TO_USE: thmork
+  PACKAGE_REGISTRY_TO_USE: BogdanGrabovschiSDU
   DOCKER_IMAGE_NAME: lowercase-name-dockerimage
   PROJECT_NAME: ProjectName
-  GROUP_NUMBER: GroupNumber #I.e  Group02
+  GROUP_NUMBER: Group01
 
 jobs:
   # Create artifact of repository source code to use for consistensy accross all jobs
