@@ -1,20 +1,10 @@
-
-
-
-
-
-
-
-requirementDiagram
-    requirement test_req {
-    id: 1
-    text: the test text.
-    risk: high
-    verifymethod: test
-    }
-
-    element test_entity {
-    type: simulation
-    }
-
-    test_entity - satisfies -> test_req
+flowchart TD
+n1["&lt;&lt;Domain&gt;&gt;<br>Bike Factory"] --> n2["&lt;&lt;Internal&gt;&gt;<br>Software"] & n6["&lt;&lt;Internal&gt;&gt;<br>Hardware"] & n11["&lt;&lt;External&gt;&gt;<br>User"] & n12["&lt;&lt;Internal&gt;&gt;<br>Maintenance Technician"] & n14[("&lt;&lt;External Database&gt;&gt;<br>Order Database")]
+n2 --> n15["Backend"] & n16["Frontend"]
+n6 --> n7["&lt;&lt;Physical&gt;&gt;<br>Warehouse"] & n8["&lt;&lt;Physical&gt;&gt;<br style="--tw-border-spacing-x: 0; --tw-border-spacing-y: 0; --tw-translate-x: 0; --tw-translate-y: 0; --tw-rotate: 0; --tw-skew-x: 0; --tw-skew-y: 0; --tw-scale-x: 1; --tw-scale-y: 1; --tw-pan-x: ; --tw-pan-y: ; --tw-pinch-zoom: ; --tw-scroll-snap-strictness: proximity; --tw-gradient-from-position: ; --tw-gradient-via-position: ; --tw-gradient-to-position: ; --tw-ordinal: ; --tw-slashed-zero: ; --tw-numeric-figure: ; --tw-numeric-spacing: ; --tw-numeric-fraction: ; --tw-ring-inset: ; --tw-ring-offset-width: 0px; --tw-ring-offset-color: ﬂ°fff¶ß --tw-ring-color: rgb(59 130 246 / .5); --tw-ring-offset-shadow: 0 0 ﬂ°°0000¶ß --tw-ring-shadow: 0 0 ﬂ°°0000¶ß --tw-shadow: 0 0 ﬂ°°0000¶ß --tw-shadow-colored: 0 0 ﬂ°°0000¶ß --tw-blur: ; --tw-brightness: ; --tw-contrast: ; --tw-grayscale: ; --tw-hue-rotate: ; --tw-invert: ; --tw-saturate: ; --tw-sepia: ; --tw-drop-shadow: ; --tw-backdrop-blur: ; --tw-backdrop-brightness: ; --tw-backdrop-contrast: ; --tw-backdrop-grayscale: ; --tw-backdrop-hue-rotate: ; --tw-backdrop-invert: ; --tw-backdrop-opacity: ; --tw-backdrop-saturate: ; --tw-backdrop-sepia: ; --tw-contain-size: ; --tw-contain-layout: ; --tw-contain-paint: ; --tw-contain-style: ;">AGV"] & n9["&lt;&lt;Physical&gt;&gt;<br style="--tw-border-spacing-x: 0; --tw-border-spacing-y: 0; --tw-translate-x: 0; --tw-translate-y: 0; --tw-rotate: 0; --tw-skew-x: 0; --tw-skew-y: 0; --tw-scale-x: 1; --tw-scale-y: 1; --tw-pan-x: ; --tw-pan-y: ; --tw-pinch-zoom: ; --tw-scroll-snap-strictness: proximity; --tw-gradient-from-position: ; --tw-gradient-via-position: ; --tw-gradient-to-position: ; --tw-ordinal: ; --tw-slashed-zero: ; --tw-numeric-figure: ; --tw-numeric-spacing: ; --tw-numeric-fraction: ; --tw-ring-inset: ; --tw-ring-offset-width: 0px; --tw-ring-offset-color: ﬂ°fff¶ß --tw-ring-color: rgb(59 130 246 / .5); --tw-ring-offset-shadow: 0 0 ﬂ°°0000¶ß --tw-ring-shadow: 0 0 ﬂ°°0000¶ß --tw-shadow: 0 0 ﬂ°°0000¶ß --tw-shadow-colored: 0 0 ﬂ°°0000¶ß --tw-blur: ; --tw-brightness: ; --tw-contrast: ; --tw-grayscale: ; --tw-hue-rotate: ; --tw-invert: ; --tw-saturate: ; --tw-sepia: ; --tw-drop-shadow: ; --tw-backdrop-blur: ; --tw-backdrop-brightness: ; --tw-backdrop-contrast: ; --tw-backdrop-grayscale: ; --tw-backdrop-hue-rotate: ; --tw-backdrop-invert: ; --tw-backdrop-opacity: ; --tw-backdrop-saturate: ; --tw-backdrop-sepia: ; --tw-contain-size: ; --tw-contain-layout: ; --tw-contain-paint: ; --tw-contain-style: ;">Workstations"]
+n5["&lt;&lt;Block&gt;&gt;<br>Warehouse Management System"] --> n13[("&lt;&lt;Database&gt;&gt;<br>Warehouse Database")] & n23["Warehouse Manager"]
+n15 --> n5 & n3["&lt;&lt;Block&gt;&gt;<br>Orchestrator"] & n4["&lt;&lt;Block&gt;&gt;<br>Fault Detection System"]
+n16 --> n17["Order User Interface"]
+n3 --> n18["Order Queueing"] & n19["Scheduler"]
+n4 --> n20["Heartbeat Monitoring"] & n21["Exception Handling"] & n22["Fault Recovery"]
+n3 --> n24["Status Monitoring"]
