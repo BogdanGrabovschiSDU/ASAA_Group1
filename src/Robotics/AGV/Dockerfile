@@ -10,13 +10,26 @@ WORKDIR /app
 COPY Cargo.toml .
 
 # Copy the src directory into the container
-COPY src .
+RUN mkdir src
 
-# Build the Rust application
+COPY src src
+
+
+# Build the Rust application, specifying release mode
+
 RUN cargo build --release
 
-# Expose the port for the web server
+# Create a new, smaller image for running the application
+FROM debian:stable-slim AS run
+
+# Set the working directory to /app
+WORKDIR /app
+
+# Copy the built binary from the build stage
+COPY --from=build /app/target/release/agv .
+
+# Expose the port for the web server (if applicable)
 EXPOSE 6969
 
 # Run the web server
-CMD ["cargo", "run", "--release"]
+CMD ["./agv"]
