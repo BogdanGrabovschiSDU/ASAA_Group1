@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package FaultInterface;
+
+service FaultService {
+    rpc GetFaults (Empty) returns (FaultResponse);
+}
+
+message Empty {}
+
+message Fault {
+    string message = 1;
+}
+
+message FaultResponse {
+    repeated Fault faults = 1;
+}
