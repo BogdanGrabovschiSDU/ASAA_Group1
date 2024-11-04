@@ -169,6 +169,7 @@ node_modules/
 
 
 # Rust
-/target/
+*/target/
 /debug/
 /*.rs.bk
+*.lock
