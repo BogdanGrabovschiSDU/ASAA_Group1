@@ -1,12 +1,11 @@
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System;
 using System.Text;
 
 public class MessageBusService
 {
-    private IConnection _connection;
-    private IModel _channel;
+    private readonly IConnection _connection;
+    private readonly IModel _channel;
 
     public MessageBusService()
     {
@@ -25,7 +24,6 @@ public class MessageBusService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             Console.WriteLine($"[x] Received: {message}");
-            // Process messages from workstations or AGVs
         };
         _channel.BasicConsume(queue: "workstation_queue", autoAck: true, consumer: consumer);
     }

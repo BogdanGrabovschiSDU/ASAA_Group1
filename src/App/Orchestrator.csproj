@@ -8,7 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-     <Protobuf Include="fault_service.proto" GrpcServices="Client" />
     <PackageReference Include="Google.Protobuf" Version="3.28.3" />
     <PackageReference Include="Grpc" Version="2.46.6" />
     <PackageReference Include="Grpc.Core" Version="2.46.6" />
@@ -19,6 +18,9 @@
     </PackageReference>
     <PackageReference Include="Npgsql" Version="8.0.5" />
     <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
-  </ItemGroup>
 
+  </ItemGroup>
+<ItemGroup>
+  <Protobuf Include="Protos\fault_service.proto" />
+</ItemGroup>
 </Project>

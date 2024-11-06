@@ -1,6 +1,4 @@
 using Grpc.Core;
-using System;
-using System.Threading.Tasks;
 using FaultInterface;
 
 public class FaultServiceClient
@@ -18,7 +16,6 @@ public class FaultServiceClient
         foreach (var fault in faults.Faults)
         {
             Console.WriteLine($"Received Fault: {fault.Message}");
-            // Process fault logic here
         }
 
         await channel.ShutdownAsync();

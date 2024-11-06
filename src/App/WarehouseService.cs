@@ -7,6 +7,8 @@ public class WarehouseService
 
     public void SaveData(string key, string value)
     {
+
+        try {
         using var connection = new NpgsqlConnection(_connectionString);
         connection.Open();
 
@@ -16,6 +18,10 @@ public class WarehouseService
         cmd.ExecuteNonQuery();
 
         Console.WriteLine($"Data saved to Warehouse: Key={key}, Value={value}");
+        }
+        catch (Exception ex) {
+            Console.WriteLine("666 Pain and Suffering");
+        }
     }
 }
-    
+
