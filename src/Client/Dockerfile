@@ -10,4 +10,4 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["node", "client.js"]
+CMD ["node", "Client.js"]

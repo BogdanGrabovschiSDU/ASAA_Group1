@@ -1,21 +1,24 @@
-# Use the appropriate Go version as per go.mod requirements
+# Use a Golang base image
 FROM golang:1.23.2
 
-# Set the Current Working Directory inside the container
+# Set the working directory
 WORKDIR /app
 
-# Copy go.mod file and download dependencies (omit go.sum if it's not present)
-COPY go.mod ./
+# Copy the go.mod and go.sum files to the working directory
+COPY go.mod go.sum ./
+
+# Download dependencies
 RUN go mod download
 
 # Copy the rest of the application source code
 COPY *.go ./
 
+# Copy the wait-for-it.sh script
+COPY wait-for-it.sh /app/wait-for-it.sh
+RUN chmod +x /app/wait-for-it.sh
+
 # Build the Go app
 RUN go build -o fault_detection
 
-# Use an unprivileged user to run the application
-USER 1000
-
 # Command to run the executable
-CMD ["/app/fault_detection"]
+CMD ["./wait-for-it.sh", "rabbitmq:5672", "--", "./fault_detection"]

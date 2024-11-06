@@ -10,9 +10,57 @@ services:
       - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq2/
       - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq2
     networks:
+      - app-network
+    restart: unless-stopped
+
+  redis:
+    image: redis:alpine
+    container_name: "redis"
+    ports:
+      - 6379:6379
+    networks:
+      - app-network
+
+  go_app:
+    build:
+      context: ./fault_detection
+      dockerfile: Dockerfile
+    container_name: "go_app"
+    depends_on:
       - rabbitmq
+      - redis
+    networks:
+      - app-network
+    restart: unless-stopped
+
+  client_app:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    container_name: "client_app"
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  orch_app:
+    build:
+      context: ./App
+      dockerfile: Dockerfile
+    container_name: "orch_app"
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - app-network
+    ports:
+      - "8080:8080"
     restart: unless-stopped
 
 networks:
-  rabbitmq:
+  app-network:
     driver: bridge
