@@ -131,4 +131,5 @@ You are free to import the latex source files into Overleaf.
 ![Alt text](images/githubactions.png)
 
 ## Block Definition Diagram
+This is out first draft
 ![BDD](diagrams/blockDefDiagram.md)
