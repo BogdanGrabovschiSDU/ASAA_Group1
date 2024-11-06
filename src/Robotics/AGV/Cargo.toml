@@ -4,9 +4,10 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+amqprs = "2.1.0"
+tokio = "1.41.0"
 [[bin]]
 name = "agv"
 path = "src/main.rs"
-=======
 amqprs = "2.1.0"
 tokio = "1.41.0"
