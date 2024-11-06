@@ -1,129 +1,109 @@
 package main
 
 import (
-    "fmt"
-    "log"
-    "time"
+	"context"
+	"fmt"
+	"log"
+	"time"
 
-    "github.com/streadway/amqp"
+	"github.com/go-redis/redis/v8"
+	"github.com/streadway/amqp"
 )
 
-// Define the Service struct
-type Service struct {
-    Name string
-}
-
-// Monitor establishes a connection to RabbitMQ and publishes heartbeats.
-func Monitor(service Service, queueName string, interval time.Duration, timeout time.Duration) {
-    conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-    if err != nil {
-        log.Fatalf("Failed to connect to RabbitMQ: %v", err)
-    }
-    defer conn.Close()
-
-    ch, err := conn.Channel()
-    if err != nil {
-        log.Fatalf("Failed to open a channel: %v", err)
-    }
-    defer ch.Close()
-
-    q, err := ch.QueueDeclare(
-        queueName, // Queue name
-        false,     // Durable
-        false,     // Delete when unused
-        false,     // Exclusive
-        false,     // No-wait
-        nil,       // Arguments
-    )
-    if err != nil {
-        log.Fatalf("Failed to declare a queue: %v", err)
-    }
-
-    ticker := time.NewTicker(interval)
-    defer ticker.Stop()
-
-    timeoutTimer := time.NewTimer(timeout)
-    defer timeoutTimer.Stop()
-
-    for {
-        select {
-        case <-ticker.C:
-            heartbeatMsg := fmt.Sprintf("Heartbeat from %s", service.Name)
-            err = ch.Publish(
-                "",     // Exchange
-                q.Name, // Routing key (queue name)
-                false,  // Mandatory
-                false,  // Immediate
-                amqp.Publishing{
-                    ContentType: "text/plain",
-                    Body:        []byte(heartbeatMsg),
-                })
-            if err != nil {
-                log.Printf("Failed to publish a message: %v", err)
-            } else {
-                log.Printf("Sent: %s", heartbeatMsg)
-            }
-        case <-timeoutTimer.C:
-            log.Printf("Timeout reached for service: %s", service.Name)
-            return
-        }
-    }
-}
-
 func main() {
-    // Create a service instance
-    service1 := Service{Name: "Service-1"}
+	// Set up Redis client
+	rdb := redis.NewClient(&redis.Options{
+		Addr: "redis:6379",
+	})
+	ctx := context.Background()
 
-    // Start monitoring the service heartbeat in a goroutine
-    //go Monitor(service1, service1.Name, 2*time.Second, 10*time.Second)
+	// Connect to Redis
+	if _, err := rdb.Ping(ctx).Result(); err != nil {
+		log.Fatalf("Failed to connect to Redis: %v", err)
+	}
 
-    // Set up the RabbitMQ consumer to receive heartbeats
-    conn, err := amqp.Dial("amqp://guest:guest@localhost:5672/")
-    if err != nil {
-        log.Fatalf("Failed to connect to RabbitMQ: %v", err)
-    }
-    defer conn.Close()
+	// Create a service instance
+	service1 := Service{Name: "Service-1"}
 
-    ch, err := conn.Channel()
-    if err != nil {
-        log.Fatalf("Failed to open a channel: %v", err)
-    }
-    defer ch.Close()
+	// Start monitoring heartbeats
+	go Monitor(service1, service1.Name, 5*time.Second, 30*time.Second)
 
-    q, err := ch.QueueDeclare(
-        service1.Name, // Queue name (matching the service name)
-        false,         // Durable
-        false,         // Delete when unused
-        false,         // Exclusive
-        false,         // No-wait
-        nil,           // Arguments
-    )
-    if err != nil {
-        log.Fatalf("Failed to declare a queue: %v", err)
-    }
+	// Set up the RabbitMQ consumer to receive heartbeats
+	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
+	if err != nil {
+		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
+	}
+	defer conn.Close()
 
-    msgs, err := ch.Consume(
-        q.Name, // Queue
-        "",     // Consumer
-        true,   // Auto-ack
-        false,  // Exclusive
-        false,  // No-local
-        false,  // No-wait
-        nil,    // Args
-    )
-    if err != nil {
-        log.Fatalf("Failed to register a consumer: %v", err)
-    }
+	ch, err := conn.Channel()
+	if err != nil {
+		log.Fatalf("Failed to open a channel: %v", err)
+	}
+	defer ch.Close()
 
-    // Keep listening for heartbeats
-    forever := make(chan bool)
+	q, err := ch.QueueDeclare(
+		service1.Name, // Queue name (matching the service name)
+		false,         // Durable
+		false,         // Delete when unused
+		false,         // Exclusive
+		false,         // No-wait
+		nil,           // Arguments
+	)
+	if err != nil {
+		log.Fatalf("Failed to declare a queue: %v", err)
+	}
 
-    go func() {
-        for msg := range msgs {
-            log.Printf("Received a heartbeat: %s", msg.Body)
-        }
-    }()
+	err = ch.QueueBind(
+		q.Name,       // queue name
+		"123",        // routing key
+		"heartbeats", // exchange
+		false,
+		nil)
+	if err != nil {
+		log.Fatalf("Failed to declare a queue: %v", err)
+	}
 
-    log.Printf("Waiting for heartbeats. To exit press CTRL+C")
-    <-forever
+	msgs, err := ch.Consume(
+		q.Name, // Queue
+		"",     // Consumer
+		true,   // Auto-ack
+		false,  // Exclusive
+		false,  // No-local
+		false,  // No-wait
+		nil,    // Args
+	)
+	if err != nil {
+		log.Fatalf("Failed to register a consumer: %v", err)
+	}
+
+	// Keep listening for heartbeats
+	forever := make(chan bool)
+
+	go func() {
+		for msg := range msgs {
+			log.Printf("{id: %s, time:%s}", msg.Body, time.Now().UTC().Format("2006-01-02T15-04-05"))
+			logMessage := fmt.Sprintf("{id: %s, time:%s}", msg.Body, time.Now().UTC().Format("2006-01-02T15-04-05"))
+			// Store in Redis
+			err := rdb.Set(ctx, "heartbeat_timestamp", logMessage, 0).Err()
+			if err != nil {
+				log.Fatalf("Failed to log timestamp to Redis: %v", err)
+			} else {
+				log.Println("Logged timestamp to Redis successfully.")
+			}
+		}
+	}()
+
+	log.Printf("Waiting for heartbeats. To exit press CTRL+C")
+	<-forever
+}
+
+// printLogs reads and prints the stored heartbeat log from Redis
+func printLogs(ctx context.Context, rdb *redis.Client) {
+	log.Println("Reading heartbeat log from Redis:")
+	value, err := rdb.Get(ctx, "heartbeat_timestamp").Result()
+	if err != nil {
+		log.Printf("Failed to read from Redis: %v", err)
+		return
+	}
+	log.Printf("Log from Redis: %s", value)
 }
