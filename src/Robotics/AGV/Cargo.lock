@@ -3,17 +3,6 @@
 version = 3
 
 [[package]]
-name = "agv"
-version = "0.1.0"
-=======
-name = "AGV"
-version = "0.1.0"
-dependencies = [
- "amqprs",
- "tokio",
-]
-
-[[package]]
 name = "addr2line"
 version = "0.24.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -27,6 +16,14 @@ name = "adler2"
 version = "2.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "512761e0bb2578dd7380c6baaa0f4ce03e84f95e960231d1dec8bf4d7d6e2627"
+
+[[package]]
+name = "agv"
+version = "0.1.0"
+dependencies = [
+ "amqprs",
+ "tokio",
+]
 
 [[package]]
 name = "amqp_serde"
