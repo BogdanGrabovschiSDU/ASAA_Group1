@@ -33,6 +33,34 @@ services:
       - app-network
     restart: unless-stopped
 
+  client_app:
+    build:
+      context: ./Client
+      dockerfile: Dockerfile
+    container_name: "client_app"
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  orch_app:
+    build:
+      context: ./App
+      dockerfile: Dockerfile
+    container_name: "orch_app"
+    depends_on:
+      - rabbitmq
+      - redis
+    networks:
+      - app-network
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+
 networks:
   app-network:
     driver: bridge
