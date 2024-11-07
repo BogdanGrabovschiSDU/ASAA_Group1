@@ -4,84 +4,198 @@
 	<declaration>// Place global declarations here.
 </declaration>
 	<template>
-		<name x="5" y="5">Template</name>
-		<declaration>// Place local declarations here.
-</declaration>
-		<location id="id0" x="323" y="-42">
-			<name x="306" y="-76">Idle</name>
-		</location>
-		<location id="id1" x="323" y="68">
-			<name x="272" y="34">Order</name>
-		</location>
-		<location id="id2" x="229" y="68">
-			<name x="153" y="25">Acknowledge</name>
-		</location>
-		<location id="id3" x="416" y="68">
-			<name x="416" y="34">Fault</name>
-		</location>
-		<location id="id4" x="323" y="204">
-			<name x="272" y="170">Parse</name>
-		</location>
-		<location id="id5" x="416" y="204">
-			<name x="348" y="170">Recover</name>
-		</location>
-		<location id="id6" x="229" y="204">
-			<name x="212" y="221">Log</name>
-		</location>
-		<location id="id7" x="382" y="323">
-			<name x="365" y="340">Bus</name>
+		<name>Warehouse</name>
+		<location id="id0" x="-42" y="-68">
+			<name x="-59" y="-102">Idle</name>
 		</location>
 		<init ref="id0"/>
-		<transition id="id8">
-			<source ref="id7"/>
+		<transition id="id1">
+			<source ref="id0"/>
 			<target ref="id0"/>
+			<nail x="0" y="-42"/>
+			<nail x="17" y="-68"/>
+			<nail x="0" y="-85"/>
+		</transition>
+	</template>
+	<template>
+		<name>Workstation</name>
+		<location id="id2" x="-221" y="-221">
+			<name x="-238" y="-255">Idle</name>
+		</location>
+		<location id="id3" x="-297" y="-136">
+			<name x="-331" y="-110">Working</name>
+		</location>
+		<location id="id4" x="-144" y="-136">
+			<name x="-119" y="-144">Reconfiguring</name>
+		</location>
+		<init ref="id2"/>
+		<transition id="id5">
+			<source ref="id3"/>
+			<target ref="id2"/>
+			<nail x="-374" y="-136"/>
+			<nail x="-374" y="-221"/>
+		</transition>
+		<transition id="id6">
+			<source ref="id4"/>
+			<target ref="id3"/>
+		</transition>
+		<transition id="id7">
+			<source ref="id2"/>
+			<target ref="id4"/>
+		</transition>
+		<transition id="id8">
+			<source ref="id2"/>
+			<target ref="id3"/>
+		</transition>
+	</template>
+	<template>
+		<name>AGV</name>
+		<location id="id9" x="-297" y="-433">
+			<name x="-314" y="-467">Idle</name>
+		</location>
+		<location id="id10" x="-365" y="-289">
+			<name x="-450" y="-297">Working</name>
+		</location>
+		<location id="id11" x="-229" y="-289">
+			<name x="-212" y="-297">Charging</name>
+		</location>
+		<init ref="id9"/>
+		<transition id="id12">
+			<source ref="id11"/>
+			<target ref="id10"/>
+			<nail x="-229" y="-221"/>
+			<nail x="-365" y="-221"/>
+		</transition>
+		<transition id="id13">
+			<source ref="id11"/>
+			<target ref="id9"/>
+		</transition>
+		<transition id="id14">
+			<source ref="id10"/>
+			<target ref="id11"/>
+		</transition>
+		<transition id="id15">
+			<source ref="id9"/>
+			<target ref="id10"/>
+		</transition>
+	</template>
+	<template>
+		<name>FaultDetection</name>
+		<location id="id16" x="-161" y="-323">
+			<name x="-178" y="-357">Idle</name>
+		</location>
+		<location id="id17" x="-161" y="-246">
+			<name x="-263" y="-255">HeartBeat</name>
+		</location>
+		<location id="id18" x="-161" y="-161">
+			<name x="-331" y="-170">HeartbeatRegistry</name>
+		</location>
+		<location id="id19" x="-51" y="-161">
+			<name x="-25" y="-170">ExceptionHandling</name>
+		</location>
+		<init ref="id16"/>
+		<transition id="id20">
+			<source ref="id19"/>
+			<target ref="id16"/>
+			<nail x="-51" y="-323"/>
+		</transition>
+		<transition id="id21">
+			<source ref="id18"/>
+			<target ref="id19"/>
+		</transition>
+		<transition id="id22">
+			<source ref="id17"/>
+			<target ref="id18"/>
+		</transition>
+		<transition id="id23">
+			<source ref="id16"/>
+			<target ref="id17"/>
+		</transition>
+	</template>
+	<template>
+		<name x="5" y="5">Orchestrator</name>
+		<declaration>// Place local declarations here.
+</declaration>
+		<location id="id24" x="323" y="-42">
+			<name x="306" y="-76">Idle</name>
+		</location>
+		<location id="id25" x="323" y="68">
+			<name x="272" y="34">Order</name>
+		</location>
+		<location id="id26" x="229" y="68">
+			<name x="153" y="25">Acknowledge</name>
+		</location>
+		<location id="id27" x="416" y="68">
+			<name x="416" y="34">Fault</name>
+		</location>
+		<location id="id28" x="323" y="204">
+			<name x="272" y="170">Parse</name>
+		</location>
+		<location id="id29" x="416" y="204">
+			<name x="348" y="170">Recover</name>
+		</location>
+		<location id="id30" x="229" y="204">
+			<name x="212" y="221">Log</name>
+		</location>
+		<location id="id31" x="382" y="323">
+			<name x="365" y="340">Bus</name>
+		</location>
+		<init ref="id24"/>
+		<transition id="id32">
+			<source ref="id31"/>
+			<target ref="id24"/>
 			<nail x="493" y="323"/>
 			<nail x="493" y="-42"/>
 		</transition>
-		<transition id="id9">
-			<source ref="id6"/>
-			<target ref="id0"/>
+		<transition id="id33">
+			<source ref="id30"/>
+			<target ref="id24"/>
 			<nail x="144" y="204"/>
 			<nail x="144" y="-42"/>
 			<nail x="306" y="-42"/>
 		</transition>
-		<transition id="id10">
-			<source ref="id4"/>
-			<target ref="id7"/>
+		<transition id="id34">
+			<source ref="id28"/>
+			<target ref="id31"/>
 		</transition>
-		<transition id="id11">
-			<source ref="id5"/>
-			<target ref="id7"/>
+		<transition id="id35">
+			<source ref="id29"/>
+			<target ref="id31"/>
 		</transition>
-		<transition id="id12">
-			<source ref="id3"/>
-			<target ref="id5"/>
+		<transition id="id36">
+			<source ref="id27"/>
+			<target ref="id29"/>
 		</transition>
-		<transition id="id13">
-			<source ref="id1"/>
-			<target ref="id4"/>
+		<transition id="id37">
+			<source ref="id25"/>
+			<target ref="id28"/>
 		</transition>
-		<transition id="id14">
-			<source ref="id2"/>
-			<target ref="id6"/>
+		<transition id="id38">
+			<source ref="id26"/>
+			<target ref="id30"/>
 		</transition>
-		<transition id="id15">
-			<source ref="id0"/>
-			<target ref="id2"/>
+		<transition id="id39">
+			<source ref="id24"/>
+			<target ref="id26"/>
 		</transition>
-		<transition id="id16">
-			<source ref="id0"/>
-			<target ref="id3"/>
+		<transition id="id40">
+			<source ref="id24"/>
+			<target ref="id27"/>
 		</transition>
-		<transition id="id17">
-			<source ref="id0"/>
-			<target ref="id1"/>
+		<transition id="id41">
+			<source ref="id24"/>
+			<target ref="id25"/>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
-Process = Template();
+Process1 = Warehouse();
+Process2 = AGV();
+Process3 = FaultDetection();
+Process4 = Orchestrator();
+
 // List one or more processes to be composed into a system.
-system Process;
+system Warehouse, Workstation, AGV, FaultDetection, Orchestrator;
+
 </system>
 	<queries>
 		<query>
