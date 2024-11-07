@@ -2,7 +2,16 @@
 <!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.6//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_6.dtd'>
 <nta>
 	<declaration>// Place global declarations here.
-</declaration>
+
+int msgType = -1;
+
+chan toAGV;
+chan toWarehouse;
+chan toWorkstation;
+
+chan fromAGV;
+chan fromWarehouse;
+chan fromWorkstation;</declaration>
 	<template>
 		<name>Warehouse</name>
 		<location id="id0" x="-42" y="-68">
@@ -19,21 +28,21 @@
 	</template>
 	<template>
 		<name>Workstation</name>
-		<location id="id2" x="-221" y="-221">
-			<name x="-238" y="-255">Idle</name>
+		<location id="id2" x="-297" y="-263">
+			<name x="-314" y="-297">Idle</name>
 		</location>
 		<location id="id3" x="-297" y="-136">
 			<name x="-331" y="-110">Working</name>
 		</location>
-		<location id="id4" x="-144" y="-136">
-			<name x="-119" y="-144">Reconfiguring</name>
+		<location id="id4" x="-204" y="-136">
+			<name x="-179" y="-144">Reconfiguring</name>
 		</location>
 		<init ref="id2"/>
 		<transition id="id5">
 			<source ref="id3"/>
 			<target ref="id2"/>
-			<nail x="-374" y="-136"/>
-			<nail x="-374" y="-221"/>
+			<nail x="-450" y="-136"/>
+			<nail x="-450" y="-263"/>
 		</transition>
 		<transition id="id6">
 			<source ref="id4"/>
@@ -46,6 +55,7 @@
 		<transition id="id8">
 			<source ref="id2"/>
 			<target ref="id3"/>
+			<label kind="synchronisation" x="-416" y="-212">toWorkstation?</label>
 		</transition>
 	</template>
 	<template>
@@ -77,6 +87,7 @@
 		<transition id="id15">
 			<source ref="id9"/>
 			<target ref="id10"/>
+			<label kind="synchronisation" x="-391" y="-374">toAGV?</label>
 		</transition>
 	</template>
 	<template>
@@ -115,76 +126,83 @@
 	<template>
 		<name x="5" y="5">Orchestrator</name>
 		<declaration>// Place local declarations here.
+
+clock a;
 </declaration>
-		<location id="id24" x="323" y="-42">
-			<name x="306" y="-76">Idle</name>
+		<location id="id24" x="153" y="-246">
+			<name x="136" y="-280">Idle</name>
 		</location>
-		<location id="id25" x="323" y="68">
-			<name x="272" y="34">Order</name>
+		<location id="id25" x="153" y="76">
+			<name x="93" y="68">Order</name>
 		</location>
-		<location id="id26" x="229" y="68">
-			<name x="153" y="25">Acknowledge</name>
+		<location id="id26" x="17" y="76">
+			<name x="-93" y="68">Acknowledge</name>
 		</location>
-		<location id="id27" x="416" y="68">
-			<name x="416" y="34">Fault</name>
+		<location id="id27" x="297" y="76">
+			<name x="229" y="68">Fault</name>
 		</location>
-		<location id="id28" x="323" y="204">
-			<name x="272" y="170">Parse</name>
+		<location id="id28" x="297" y="212">
+			<name x="212" y="204">Recover</name>
 		</location>
-		<location id="id29" x="416" y="204">
-			<name x="348" y="170">Recover</name>
+		<location id="id29" x="17" y="212">
+			<name x="0" y="229">Log</name>
 		</location>
-		<location id="id30" x="229" y="204">
-			<name x="212" y="221">Log</name>
+		<location id="id30" x="153" y="331">
+			<name x="111" y="323">Bus</name>
 		</location>
-		<location id="id31" x="382" y="323">
-			<name x="365" y="340">Bus</name>
+		<location id="id31" x="153" y="-102">
+			<name x="59" y="-127">ReceiveMsg</name>
 		</location>
 		<init ref="id24"/>
 		<transition id="id32">
 			<source ref="id31"/>
-			<target ref="id24"/>
-			<nail x="493" y="323"/>
-			<nail x="493" y="-42"/>
+			<target ref="id27"/>
+			<label kind="guard" x="204" y="-34">msgType==2</label>
+			<nail x="297" y="-102"/>
 		</transition>
 		<transition id="id33">
-			<source ref="id30"/>
-			<target ref="id24"/>
-			<nail x="144" y="204"/>
-			<nail x="144" y="-42"/>
-			<nail x="306" y="-42"/>
+			<source ref="id31"/>
+			<target ref="id26"/>
+			<label kind="guard" x="-76" y="-34">msgType==0</label>
+			<nail x="17" y="-102"/>
 		</transition>
 		<transition id="id34">
-			<source ref="id28"/>
-			<target ref="id31"/>
+			<source ref="id31"/>
+			<target ref="id25"/>
+			<label kind="guard" x="68" y="-34">msgType==1</label>
 		</transition>
 		<transition id="id35">
-			<source ref="id29"/>
-			<target ref="id31"/>
+			<source ref="id30"/>
+			<target ref="id24"/>
+			<nail x="391" y="331"/>
+			<nail x="391" y="-246"/>
 		</transition>
 		<transition id="id36">
-			<source ref="id27"/>
-			<target ref="id29"/>
+			<source ref="id28"/>
+			<target ref="id30"/>
 		</transition>
 		<transition id="id37">
 			<source ref="id25"/>
-			<target ref="id28"/>
+			<target ref="id30"/>
 		</transition>
 		<transition id="id38">
-			<source ref="id26"/>
-			<target ref="id30"/>
+			<source ref="id29"/>
+			<target ref="id24"/>
+			<nail x="-119" y="212"/>
+			<nail x="-119" y="-246"/>
 		</transition>
 		<transition id="id39">
 			<source ref="id24"/>
-			<target ref="id26"/>
+			<target ref="id31"/>
+			<label kind="select" x="8" y="-187">msgType:int[0,2]</label>
 		</transition>
 		<transition id="id40">
-			<source ref="id24"/>
-			<target ref="id27"/>
+			<source ref="id27"/>
+			<target ref="id28"/>
 		</transition>
 		<transition id="id41">
-			<source ref="id24"/>
-			<target ref="id25"/>
+			<source ref="id26"/>
+			<target ref="id29"/>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
