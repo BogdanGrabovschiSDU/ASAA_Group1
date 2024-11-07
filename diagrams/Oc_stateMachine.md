@@ -1,6 +1,6 @@
 stateDiagram-v2
         [*] --> Listening
-        Listening --> [*]: Panic
+        Listening --> [*]: Offline
         	state msgType <<fork>>
         Listening --> msgType:Recieve Message
 		state msgJoin <<join>>
