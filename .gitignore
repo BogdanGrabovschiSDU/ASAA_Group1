@@ -169,7 +169,12 @@ node_modules/
 
 
 # Rust
+*/*/*/target/
 */target/
 /debug/
 /*.rs.bk
 *.lock
+
+# Mac
+.DS_Store
+*/.DS_Store

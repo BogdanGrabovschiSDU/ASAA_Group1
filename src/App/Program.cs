@@ -1,12 +1,24 @@
-﻿public class Program
+﻿using log4net;
+using log4net.Config;
+using System.Reflection;
+
+public class Program
 {
-    static void Main(string[] args)
+
+    private static readonly ILog log = LogManager.GetLogger(typeof(Program));
+
+
+    static void Main()
     {
+        var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
+        XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
+
+
+
         // Remove When out of proof of conecpt phase
         MessageBusService messageBusService = null;
         FaultServiceClient faultServiceClient = null;
         WarehouseService warehouseService = null;
-        //
 
 
         // Initialize orchestrator components
@@ -17,7 +29,7 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.StackTrace);
-            Console.WriteLine("Could not start the messageBusService");
+            log.Error("Could not start the messageBusService");
         }
         try
         {
@@ -26,7 +38,7 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.StackTrace);
-            Console.WriteLine("Could not start the FaultServiceClient");
+            log.Error("Could not start the FaultServiceClient");
         }
         try
         {
@@ -35,26 +47,30 @@
         catch (Exception ex)
         {
             Console.WriteLine(ex.StackTrace);
-            Console.WriteLine("Could not start the warehouseService");
+            log.Error("Could not start the warehouseService");
         }
 
         // Start services
-        try {
-        Thread messageBusThread = new Thread(messageBusService.StartListening);
-        messageBusThread.Start();
+        try
+        {
+            Thread messageBusThread = new Thread(messageBusService.StartListening);
+            messageBusThread.Start();
 
         }
-        catch {
+        catch
+        {
 
-            Console.WriteLine("Could not start messageBusThread");
+            log.Error("Could not start messageBusThread");
         }
         // Start FaultService Client in another thread
-        try {
-        Thread faultServiceThread = new Thread(async () => await faultServiceClient.ListenForFaultsAsync());
-        faultServiceThread.Start();
+        try
+        {
+            Thread faultServiceThread = new Thread(async () => await faultServiceClient.ListenForFaultsAsync());
+            faultServiceThread.Start();
         }
-        catch {
-        Console.WriteLine("Could not start faultServiceThread");
+        catch
+        {
+            log.Error("Could not start faultServiceThread");
 
         }
         Console.WriteLine("Orchestrator is running. Press any key to exit.");
