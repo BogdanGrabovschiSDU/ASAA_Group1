@@ -28,8 +28,5 @@ WORKDIR /app
 # Copy the built binary from the build stage
 COPY --from=build /app/target/release/agv .
 
-# Expose the port for the web server (if applicable)
-EXPOSE 6969
-
 # Run the web server
 CMD ["./agv"]
