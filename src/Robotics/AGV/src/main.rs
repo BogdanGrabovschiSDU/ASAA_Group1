@@ -6,25 +6,39 @@ use amqprs::channel::QueueBindArguments;
 use amqprs::channel::QueueDeclareArguments;
 use amqprs::connection::Connection;
 use amqprs::connection::OpenConnectionArguments;
+use amqprs::error::Error;
 use amqprs::BasicProperties;
+use log::{debug, error, info, warn};
+use log4rs;
 #[tokio::main]
 async fn main() {
-    // Your asynchronous code here
-    rabbit_test("test").await;
+
+    log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
+    match rabbit_test().await {
+        Ok(success) => {
+            if success {
+                info!("RabbitMQ test successful");
+            } else {
+                warn!("RabbitMQ test encountered issues");
+            }
+        }
+        Err(err) => {
+            error!("RabbitMQ test failed: {}", err);
+        }
+    }
 }
-async fn rabbit_test(message: &str) -> bool {
+async fn rabbit_test() -> Result<bool, Error> {
     let connection = Connection::open(&OpenConnectionArguments::new(
         "localhost",
         5672,
         "guest",
         "guest",
     ))
-    .await
-    .unwrap();
+    .await?;
     connection
         .register_callback(DefaultConnectionCallback)
-        .await
-        .unwrap();
+        .await?;
+    info!("Connected to RabbitMQ");
 
     let channel = connection.open_channel(None).await.unwrap();
     channel
@@ -48,6 +62,7 @@ async fn rabbit_test(message: &str) -> bool {
         ))
         .await
         .unwrap();
+    debug!("Channel created");
 
     // Start consumer
     let args = BasicConsumeArguments::new(&queue_name, "example_basic_pub_sub");
@@ -60,8 +75,6 @@ async fn rabbit_test(message: &str) -> bool {
             }
         }
     });
-
-    println!(" [*] Waiting for messages. To exit press CTRL+C");
 
     println!(" [*] Waiting for messages. To exit press CTRL+C");
     // Publish message
@@ -85,6 +98,6 @@ async fn rabbit_test(message: &str) -> bool {
     std::thread::sleep_ms(1000);
     channel.close().await.unwrap();
     connection.close().await.unwrap();
-    let a = false;
-    a
+    info!("Connection closed");
+    Ok(true)
 }

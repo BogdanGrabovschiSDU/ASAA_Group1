@@ -4,3 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+amqprs = "2.1.0"
+log = "0.4.22"
+log4rs = "1.3.0"
+tokio = "1.41.1"
