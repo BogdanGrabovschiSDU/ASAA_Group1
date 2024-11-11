@@ -3,14 +3,17 @@ package main
 import (
 	"context"
 	"fmt"
-	"log"
+	logger "github.com/jeanphorn/log4go"
 	"time"
-
+    "log"
 	"github.com/go-redis/redis/v8"
 	"github.com/streadway/amqp"
 )
 
 func main() {
+    // Setup logging
+	logger.LoadConfiguration("./logConfig.json")
+    logger.Info("TEST")
 	// Set up Redis client
 	rdb := redis.NewClient(&redis.Options{
 		Addr: "redis:6379",
