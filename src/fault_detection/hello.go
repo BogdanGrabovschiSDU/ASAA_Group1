@@ -1,109 +1,74 @@
 package main
 
 import (
-	"context"
-	"fmt"
-	"log"
-	"time"
+    "context"
+    "fmt"
+    "log"
+    "time"
 
-	"github.com/go-redis/redis/v8"
-	"github.com/streadway/amqp"
+    "github.com/go-redis/redis/v8"
+    "google.golang.org/grpc"
+    "fault_dee" // Import the generated gRPC code
 )
 
 func main() {
-	// Set up Redis client
-	rdb := redis.NewClient(&redis.Options{
-		Addr: "redis:6379",
-	})
-	ctx := context.Background()
+    // Set up Redis client
+    rdb := redis.NewClient(&redis.Options{
+        Addr: "redis:6379",
+    })
+    ctx := context.Background()
 
-	// Connect to Redis
-	if _, err := rdb.Ping(ctx).Result(); err != nil {
-		log.Fatalf("Failed to connect to Redis: %v", err)
-	}
+    // Connect to Redis
+    if _, err := rdb.Ping(ctx).Result(); err != nil {
+        log.Fatalf("Failed to connect to Redis: %v", err)
+    }
 
-	// Create a service instance
-	service1 := Service{Name: "Service-1"}
+    // Set up gRPC client for FaultService
+    grpcConn, err := grpc.Dial("other-service-address:50051", grpc.WithInsecure())
+    if err != nil {
+        log.Fatalf("Failed to connect to gRPC FaultService: %v", err)
+    }
+    defer grpcConn.Close()
 
-	// Start monitoring heartbeats
-	go Monitor(service1, service1.Name, 5*time.Second, 30*time.Second)
+    faultClient := faultinterface.NewFaultServiceClient(grpcConn)
 
-	// Set up the RabbitMQ consumer to receive heartbeats
-	conn, err := amqp.Dial("amqp://guest:guest@rabbitmq:5672/")
-	if err != nil {
-		log.Fatalf("Failed to connect to RabbitMQ: %v", err)
-	}
-	defer conn.Close()
+    serviceName := "Service-1"
+    checkInterval := 5 * time.Second
 
-	ch, err := conn.Channel()
-	if err != nil {
-		log.Fatalf("Failed to open a channel: %v", err)
-	}
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(
-		service1.Name, // Queue name (matching the service name)
-		false,         // Durable
-		false,         // Delete when unused
-		false,         // Exclusive
-		false,         // No-wait
-		nil,           // Arguments
-	)
-	if err != nil {
-		log.Fatalf("Failed to declare a queue: %v", err)
-	}
-
-	err = ch.QueueBind(
-		q.Name,       // queue name
-		"123",        // routing key
-		"heartbeats", // exchange
-		false,
-		nil)
-	if err != nil {
-		log.Fatalf("Failed to declare a queue: %v", err)
-	}
-
-	msgs, err := ch.Consume(
-		q.Name, // Queue
-		"",     // Consumer
-		true,   // Auto-ack
-		false,  // Exclusive
-		false,  // No-local
-		false,  // No-wait
-		nil,    // Args
-	)
-	if err != nil {
-		log.Fatalf("Failed to register a consumer: %v", err)
-	}
-
-	// Keep listening for heartbeats
-	forever := make(chan bool)
-
-	go func() {
-		for msg := range msgs {
-			log.Printf("{id: %s, time:%s}", msg.Body, time.Now().UTC().Format("2006-01-02T15-04-05"))
-			logMessage := fmt.Sprintf("{id: %s, time:%s}", msg.Body, time.Now().UTC().Format("2006-01-02T15-04-05"))
-			// Store in Redis
-			err := rdb.Set(ctx, "heartbeat_timestamp", logMessage, 0).Err()
-			if err != nil {
-				log.Fatalf("Failed to log timestamp to Redis: %v", err)
-			} else {
-				log.Println("Logged timestamp to Redis successfully.")
-			}
-		}
-	}()
-
-	log.Printf("Waiting for heartbeats. To exit press CTRL+C")
-	<-forever
+    for {
+        // Get the last heartbeat timestamp
+        value, err := rdb.Get(ctx, "heartbeat_timestamp").Result()
+        if err != nil {
+            log.Printf("Error retrieving heartbeat for %s: %v", serviceName, err)
+            reportFault(faultClient, ctx, fmt.Sprintf("Failed to retrieve heartbeat: %v", err))
+        } else {
+            layout := "2006-01-02T15-04-05"
+            lastHeartbeatTime, err := time.Parse(layout, value)
+            if err != nil {
+                log.Printf("Error parsing timestamp for %s: %v", serviceName, err)
+                reportFault(faultClient, ctx, fmt.Sprintf("Failed to parse timestamp: %v", err))
+            } else {
+                elapsed := time.Since(lastHeartbeatTime)
+                if elapsed > checkInterval {
+                    faultMessage := fmt.Sprintf("Heartbeat missing for %v", elapsed)
+                    reportFault(faultClient, ctx, faultMessage)
+                    fmt.Printf("Alert: %s %s\n", serviceName, faultMessage)
+                } else {
+                    fmt.Printf("%s heartbeat is recent (elapsed: %v)\n", serviceName, elapsed)
+                }
+            }
+        }
+        time.Sleep(checkInterval)
+    }
 }
 
-// printLogs reads and prints the stored heartbeat log from Redis
-func printLogs(ctx context.Context, rdb *redis.Client) {
-	log.Println("Reading heartbeat log from Redis:")
-	value, err := rdb.Get(ctx, "heartbeat_timestamp").Result()
-	if err != nil {
-		log.Printf("Failed to read from Redis: %v", err)
-		return
-	}
-	log.Printf("Log from Redis: %s", value)
+// reportFault sends a fault message to the FaultService
+func reportFault(client faultinterface.FaultServiceClient, ctx context.Context, message string) {
+    fault := &faultinterface.Fault{Message: message}
+    faultResponse, err := client.GetFaults(ctx, &faultinterface.Empty{})
+    if err != nil {
+        log.Printf("Failed to report fault to gRPC FaultService: %v", err)
+    } else {
+        log.Printf("Fault reported: %s", fault.Message)
+    }
 }
