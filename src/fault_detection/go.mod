@@ -1,6 +1,6 @@
 module example/hello
 
-go 1.23.2
+go 1.22.7
 
 require (
 	github.com/go-redis/redis/v8 v8.11.5
