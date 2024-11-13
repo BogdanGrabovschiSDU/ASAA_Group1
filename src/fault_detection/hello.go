@@ -2,14 +2,11 @@ package main
 
 import (
 	"context"
-	faults "example/hello/Protos"
 	"flag"
 	"fmt"
-	"log"
+	logger "github.com/jeanphorn/log4go"
 	"time"
-
 	pb "example/hello/Protos"
-
 	"github.com/go-redis/redis/v8"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
@@ -20,7 +17,10 @@ var (
 	name = flag.String("name", "world", "Name to greet")
 )
 
+
 func main() {
+  logger.LoadConfiguration("./logConfig.json")
+    logger.Info("TEST")
 	flag.Parse()
 	// Set up a connection to the server.
 	conn, err := grpc.NewClient(*addr, grpc.WithTransportCredentials(insecure.NewCredentials()))
