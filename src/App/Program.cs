@@ -1,81 +1,36 @@
 ﻿using log4net;
 using log4net.Config;
+using Microsoft.AspNetCore.Builder;
 using System.Reflection;
 
 public class Program
 {
-
     private static readonly ILog log = LogManager.GetLogger(typeof(Program));
 
-
-    static void Main()
+    public static void Main(string[] args)
     {
+        // Configure log4net
         var logRepository = LogManager.GetRepository(Assembly.GetEntryAssembly());
         XmlConfigurator.Configure(logRepository, new FileInfo("log4net.config"));
 
+        // Create the ASP.NET Core builder
 
+        var builder = WebApplication.CreateBuilder(args);
 
-        // Remove When out of proof of conecpt phase
-        MessageBusService messageBusService = null;
-        FaultServiceClient faultServiceClient = null;
-        WarehouseService warehouseService = null;
+        log.Debug("builder createed");
+        // Add gRPC services
+        builder.Services.AddGrpc();
 
+        // Build the application
+        var app = builder.Build();
 
-        // Initialize orchestrator components
-        try
-        {
-            messageBusService = new MessageBusService();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.StackTrace);
-            log.Error("Could not start the messageBusService");
-        }
-        try
-        {
-            faultServiceClient = new FaultServiceClient();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.StackTrace);
-            log.Error("Could not start the FaultServiceClient");
-        }
-        try
-        {
-            warehouseService = new WarehouseService();
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine(ex.StackTrace);
-            log.Error("Could not start the warehouseService");
-        }
+         var faultServiceServer = new FaultServiceServer(50051); // Use your desired port
+        faultServiceServer.Start();
+        // (Optional) Add REST API endpoints if needed
+        // app.MapGet("/", () => "Hello from my REST API!");
 
-        // Start services
-        try
-        {
-            Thread messageBusThread = new Thread(messageBusService.StartListening);
-            messageBusThread.Start();
-
-        }
-        catch
-        {
-
-            log.Error("Could not start messageBusThread");
-        }
-        // Start FaultService Client in another thread
-        try
-        {
-            Thread faultServiceThread = new Thread(async () => await faultServiceClient.ListenForFaultsAsync());
-            faultServiceThread.Start();
-        }
-        catch
-        {
-            log.Error("Could not start faultServiceThread");
-
-        }
-        Console.WriteLine("Orchestrator is running. Press any key to exit.");
-        Console.ReadKey();
-
-        // Stop services on exit
+        // Start the application
+        log.Warn("Warning This is running");
+        app.Run();
     }
 }
