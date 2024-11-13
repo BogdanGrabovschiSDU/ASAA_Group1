@@ -1,0 +1,33 @@
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+public class Order
+{
+    private static readonly log4net.ILog log = log4net.LogManager.GetLogger(typeof(Order));
+    public string Model {get; set;}
+
+    public Order(string doc){
+
+        JObject json = new();
+        try {
+        JObject json = JObject.Parse(doc);
+        }
+        catch (Exception ex) {
+
+            log.Error("400 Bad Request: Could not Parse Json");
+            throw new JsonException("400 Bad Request");
+        }
+
+        Validate(json);
+    }
+
+
+    public Validate(JObject json) {
+
+
+
+    }
+
+
+
+
+}
