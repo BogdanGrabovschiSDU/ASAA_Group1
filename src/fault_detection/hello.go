@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+    "log"
 	logger "github.com/jeanphorn/log4go"
 	"time"
 	pb "example/hello/Protos"
@@ -76,9 +77,9 @@ func main() {
 }
 
 // reportFault sends a fault message to the FaultService
-func reportFault(client faults.FaultServiceClient, ctx context.Context, message string) {
-	fault := &faults.Fault{Message: message}
-	_, err := client.GetFaults(ctx, &faults.Empty{})
+func reportFault(client pb.FaultServiceClient, ctx context.Context, message string) {
+	fault := &pb.Fault{Message: message}
+	_, err := client.GetFaults(ctx, &pb.Empty{})
 	if err != nil {
 		log.Printf("Failed to report fault to gRPC FaultService: %v", err)
 	} else {
