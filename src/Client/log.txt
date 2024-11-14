@@ -1,0 +1,58 @@
+Order received: {"model":"CityBike"}
+Order received: {"model":"CityBike"}
+Order received: {"model":"CityBike"}
+Order received: {"model":"CityBike"}
+Order received: {"model":"WomenBike"}
+Order received: {"model":"MountainBike"}
+[2024/11/14 06:56:40 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024/11/14 06:56:56 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024/11/14 06:57:11 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024-11-14T06:57:15.954976 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:15.957435 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:16.266851 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:16.275018 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:16.619443 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:16.627926 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:17.163329 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:17.163474 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:18.164081 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:18.164090 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:19.932039 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:19.939974 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:23.305364 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:23.306645 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024/11/14 06:57:26 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024-11-14T06:57:29.908245 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:29.912666 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024/11/14 06:57:42 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024/11/14 06:57:57 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024-11-14T06:57:59.732964 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:57:59.745001 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:00.107267 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:00.113879 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:00.512194 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:00.512695 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:01.155464 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:01.160005 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:02.122205 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:02.138551 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:03.918280 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:03.918257 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:07.258026 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:07.262181 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:13.817820 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:13.823349 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024/11/14 06:58:14 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024-11-14T06:58:26.799193 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:26.808425 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024/11/14 06:58:30 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024/11/14 06:58:45 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024-11-14T06:58:52.589388 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:58:52.589413 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024/11/14 06:59:00 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024/11/14 06:59:16 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024/11/14 06:59:31 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024-11-14T06:59:43.979393 ERROR workstations] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024-11-14T06:59:43.999416 ERROR agv] RabbitMQ test failed: AMQP network error: network io error: Connection refused (os error 111)
+[2024/11/14 06:59:46 UTC] [DEFAULT] [INFO] (main.main:16) TEST
+[2024/11/14 07:00:02 UTC] [DEFAULT] [INFO] (main.main:16) TEST
