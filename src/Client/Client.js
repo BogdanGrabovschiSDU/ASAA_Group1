@@ -12,7 +12,7 @@ app.get('/', (req, res) => {
 });
 
 // Endpoint to handle form submission
-app.post('/submit-order', (req, res) => {
+app.post('http://locahost:8080/', (req, res) => {
     const bikeOrder = req.body;
     console.log('Received order:', bikeOrder);
 
