@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,10 +12,62 @@
         }
     </style>
 </head>
-
 <body>
-    <h1>It works!</h1>
-    <script src="client.js"></script>
-</body>
+    <h1>Bike Order System</h1>
+    <form id="uniqueID">
+        <label>Select a model</label><br>
+        <label>
+            <input type="radio" name="name" value="MountainBike" checked>
+            <img src="https://placehold.co/200x200" alt="Option 1">
+        </label>
+        <label>
+            <input type="radio" name="name" value="CityBike">
+            <img src="https://placehold.co/200x200" alt="Option 2">
+        </label>
+        <label>
+            <input type="radio" name="name" value="OneWheeler">
+            <img src="https://placehold.co/200x200" alt="Option 3">
+        </label>
+        <br>
+        <input id="submit" type="submit" value="Submit order">
+    </form>
 
+    <div id="log-output" style="margin-top: 20px; padding: 10px; border: 1px solid #ddd;">
+        <h2>Log Output</h2>
+        <pre id="log-content"></pre>
+    </div>
+
+    <script>
+        document.querySelector('form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const selectedModel = document.querySelector('input[name="name"]:checked').value;
+            const data = { model: selectedModel };
+
+            fetch('http://localhost:8080/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => console.log('Success:', data))
+            .catch(error => console.error('Error:', error));
+        });
+
+        // Fetch and display log data periodically
+        function fetchLogData() {
+            fetch('/log')
+                .then(response => response.text())
+                .then(logContent => {
+                    document.getElementById('log-content').textContent = logContent;
+                })
+                .catch(error => console.error('Error fetching log data:', error));
+        }
+
+        // Poll for log updates every 2 seconds
+        setInterval(fetchLogData, 2000);
+    </script>
+</body>
 </html>

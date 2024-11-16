@@ -7,8 +7,8 @@ services:
       - 5672:5672
       - 15672:15672
     volumes:
-      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq2/
-      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq2
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
     networks:
       - app-network
     restart: unless-stopped
@@ -20,18 +20,27 @@ services:
       - 6379:6379
     networks:
       - app-network
+    restart: unless-stopped
 
   go_app:
     build:
       context: ./fault_detection
       dockerfile: Dockerfile
     container_name: "go_app"
+    volumes:
+      - ./fault_detection/logs:/app/logs
+      - ./Client/log.txt:/app/logs/FaultDetector.log
     depends_on:
       - rabbitmq
       - redis
     networks:
       - app-network
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   client_app:
     build:
@@ -47,11 +56,51 @@ services:
       - "3000:3000"
     restart: unless-stopped
 
+  agvs:
+    build:
+      context: ./Robotics/AGV
+      dockerfile: Dockerfile
+    container_name: "agv"
+    volumes:
+      - ./Robotics/AGV/log:/app/log
+      - ./Client/log.txt:/app/log/agv.log
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  workstations:
+    build:
+      context: ./Robotics/Workstations
+      dockerfile: Dockerfile
+    container_name: "workstations"
+    volumes:
+      - ./Robotics/Workstations/log:/app/log
+      - ./Client/log.txt:/app/log/workstations.log
+    depends_on:
+      - rabbitmq
+    networks:
+      - app-network
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
   orch_app:
     build:
       context: ./App
       dockerfile: Dockerfile
     container_name: "orch_app"
+    volumes:
+      - ./App/logged:/app/logged
     depends_on:
       - rabbitmq
       - redis
@@ -60,6 +109,11 @@ services:
     ports:
       - "8080:8080"
     restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   app-network:

@@ -4,6 +4,8 @@ FROM golang:1.23.2
 # Set the working directory
 WORKDIR /app
 
+COPY logConfig.json ./
+
 # Copy the go.mod and go.sum files to the working directory
 COPY go.mod go.sum ./
 
@@ -16,6 +18,8 @@ COPY *.go ./
 # Copy the wait-for-it.sh script
 COPY wait-for-it.sh /app/wait-for-it.sh
 RUN chmod +x /app/wait-for-it.sh
+
+RUN mkdir -p /app/logs
 
 # Build the Go app
 RUN go build -o fault_detection

@@ -11,6 +11,9 @@ COPY Protos/* /app/Protos/
 # Restore NuGet packages
 RUN dotnet restore
 
+COPY log4net.config ./
+RUN mkdir -p /app/logged
+
 RUN ls
 # Build the project
 RUN dotnet build

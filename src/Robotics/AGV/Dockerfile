@@ -25,6 +25,10 @@ FROM debian:stable-slim AS run
 # Set the working directory to /app
 WORKDIR /app
 
+COPY log4rs.yaml ./
+
+RUN mkdir -p /app/logs
+
 # Copy the built binary from the build stage
 COPY --from=build /app/target/release/agv .
 

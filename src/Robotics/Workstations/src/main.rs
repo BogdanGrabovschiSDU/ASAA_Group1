@@ -29,7 +29,7 @@ async fn main() {
 }
 async fn rabbit_test() -> Result<bool, Error> {
     let connection = Connection::open(&OpenConnectionArguments::new(
-        "localhost",
+        "rabbitmq",
         5672,
         "guest",
         "guest",
