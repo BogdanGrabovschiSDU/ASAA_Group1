@@ -1,0 +1,29 @@
+
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:80" # Map container port 80 to localhost:8080
+    environment:
+      - CONNECTION_STRING=Host=db;Username=postgres;Password=yourpassword;Database=warehouse
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: warehouse_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: yourpassword
+      POSTGRES_DB: warehouse
+    ports:
+      - "5432:5432" # Map container port 5432 to localhost:5432
+    volumes:
+      - postgres_data:/var/lib/postgresql/data # This maps a named volume for persistent storage
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql # This initializes the database schema
+
+volumes:
+  postgres_data:
