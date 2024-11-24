@@ -22,34 +22,26 @@ public class Order
 
         if (Validate(json))
         {
-
-            //TODO order recived logic
-
+            MessageBusService mv = new MessageBusService();
+            mv.SendMessage(json, "AGGV");
+            mv.SendMessage(json, "Workstation");
+            mv.SendMessage(json, "Workstation");
         }
-        else {
+        else
+        {
             throw new KeyNotFoundException();
         }
     }
 
-
     public bool Validate(JObject json)
     {
-
         if (json.TryGetValue("Model", out JToken? model))
         {
-
             if (Enum.TryParse(model.ToString(), out Models _))
             {
-
                 return true;
             }
         }
-
         return false;
-
     }
-
-
-
-
 }

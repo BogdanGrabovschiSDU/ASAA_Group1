@@ -7,8 +7,8 @@ services:
       - 5672:5672
       - 15672:15672
     volumes:
-      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
-      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+      - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq2/
+      - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq2
     networks:
       - app-network
     restart: unless-stopped
@@ -107,7 +107,8 @@ services:
     networks:
       - app-network
     ports:
-      - "8080:8080"
+      - "8080:5000"
+      - "50051:50051"
     restart: unless-stopped
     logging:
       driver: "json-file"

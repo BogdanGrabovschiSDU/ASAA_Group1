@@ -20,6 +20,7 @@ RUN dotnet build
 
 # Expose the port
 EXPOSE 8080
+EXPOSE 50051
 
 # Run the application
 CMD ["dotnet", "run"]

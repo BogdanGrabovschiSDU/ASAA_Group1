@@ -1,18 +1,15 @@
 use amqprs::callbacks::DefaultChannelCallback;
 use amqprs::callbacks::DefaultConnectionCallback;
 use amqprs::channel::BasicConsumeArguments;
-use amqprs::channel::BasicPublishArguments;
 use amqprs::channel::QueueBindArguments;
 use amqprs::channel::QueueDeclareArguments;
 use amqprs::connection::Connection;
 use amqprs::connection::OpenConnectionArguments;
 use amqprs::error::Error;
-use amqprs::BasicProperties;
 use log::{debug, error, info, warn};
 use log4rs;
 #[tokio::main]
 async fn main() {
-
     log4rs::init_file("log4rs.yaml", Default::default()).unwrap();
     match rabbit_test().await {
         Ok(success) => {
@@ -29,7 +26,7 @@ async fn main() {
 }
 async fn rabbit_test() -> Result<bool, Error> {
     let connection = Connection::open(&OpenConnectionArguments::new(
-        "rabbitmq",
+        "localhost",
         5672,
         "guest",
         "guest",
@@ -56,7 +53,7 @@ async fn rabbit_test() -> Result<bool, Error> {
     let exchange_name = "amq.topic";
     channel
         .queue_bind(QueueBindArguments::new(
-            &queue_name,
+            &"AGV",
             exchange_name,
             routing_key,
         ))
@@ -71,31 +68,19 @@ async fn rabbit_test() -> Result<bool, Error> {
     tokio::spawn(async move {
         while let Some(msg) = rx.recv().await {
             if let Some(payload) = msg.content {
-                println!(" [x] Received {:?}", (&payload));
+                let payload_str = String::from_utf8_lossy(&payload);
+                info!(" [x] Received {}", payload_str);
+                info!("Moving to workstation");
+                info!("Moved to workedstation");
+                info!("Handed off to workstation");
             }
         }
     });
 
     println!(" [*] Waiting for messages. To exit press CTRL+C");
-    // Publish message
-    let content = String::from(
-        r#"
-        {
-            "publisher": "example"
-            "data": "Hello, amqprs!"
-        }
-    "#,
-    )
-    .into_bytes();
-
-    let args = BasicPublishArguments::new(exchange_name, routing_key);
-    channel
-        .basic_publish(BasicProperties::default(), content, args)
-        .await
-        .unwrap();
-
     // Wait for the message to be received
-    std::thread::sleep_ms(1000);
+    tokio::signal::ctrl_c().await.unwrap();
+
     channel.close().await.unwrap();
     connection.close().await.unwrap();
     info!("Connection closed");
