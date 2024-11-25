@@ -21,6 +21,11 @@ RUN chmod +x /app/wait-for-it.sh
 
 RUN mkdir -p /app/logs
 
+RUN mkdir /app/Protos
+
+COPY Protos/ /app/Protos
+
+
 # Build the Go app
 RUN go build -o fault_detection
 
