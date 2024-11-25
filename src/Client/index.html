@@ -44,7 +44,7 @@
             const selectedModel = document.querySelector('input[name="name"]:checked').value;
             const data = { model: selectedModel };
 
-            fetch('http://localhost:8080/', {
+            fetch('/submit-order', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
