@@ -3,216 +3,226 @@
 <nta>
 	<declaration>// Place global declarations here.
 
-int msgType = -1;
+int i=0;
+bool isAGVWorking = false;
 
-chan toAGV;
-chan toWarehouse;
-chan toWorkstation;
+chan startAGVOrc;
+chan startAGVBus;
 
-chan fromAGV;
-chan fromWarehouse;
-chan fromWorkstation;</declaration>
+chan doneAGVOrc;
+chan doneAGVBus;
+
+
+
+</declaration>
 	<template>
-		<name>Warehouse</name>
-		<location id="id0" x="-42" y="-68">
-			<name x="-59" y="-102">Idle</name>
+		<name>AGVBusTopic</name>
+		<declaration>clock a;</declaration>
+		<location id="id0" x="-535" y="-552">
+			<name x="-545" y="-586">Exists</name>
+			<label kind="invariant" x="-510" y="-561">a&lt;=5</label>
+		</location>
+		<location id="id1" x="-535" y="-416">
+			<name x="-510" y="-425">Listening</name>
+			<label kind="invariant" x="-586" y="-425">a&lt;=2</label>
+		</location>
+		<location id="id2" x="-595" y="-280">
+			<name x="-578" y="-289">FromOrc</name>
+			<urgent/>
+		</location>
+		<location id="id3" x="-536" y="-178">
+			<name x="-510" y="-187">SendMsg</name>
+		</location>
+		<location id="id4" x="-459" y="-280">
+			<name x="-425" y="-289">FromAGV</name>
+			<urgent/>
 		</location>
 		<init ref="id0"/>
-		<transition id="id1">
-			<source ref="id0"/>
+		<transition id="id5">
+			<source ref="id4"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-484" y="-238">doneAGVOrc!</label>
+			<label kind="assignment" x="-484" y="-221">isAGVWorking=false</label>
+		</transition>
+		<transition id="id6">
+			<source ref="id1"/>
+			<target ref="id4"/>
+			<label kind="synchronisation" x="-493" y="-365">doneAGVBus?</label>
+		</transition>
+		<transition id="id7">
+			<source ref="id2"/>
+			<target ref="id3"/>
+			<label kind="synchronisation" x="-697" y="-255">startAGVBus!</label>
+		</transition>
+		<transition id="id8">
+			<source ref="id3"/>
 			<target ref="id0"/>
-			<nail x="0" y="-42"/>
-			<nail x="17" y="-68"/>
-			<nail x="0" y="-85"/>
+			<label kind="assignment" x="-790" y="-374">a=0</label>
+			<nail x="-799" y="-178"/>
+			<nail x="-798" y="-552"/>
+		</transition>
+		<transition id="id9">
+			<source ref="id1"/>
+			<target ref="id2"/>
+			<label kind="synchronisation" x="-671" y="-365">startAGVOrc?</label>
+		</transition>
+		<transition id="id10">
+			<source ref="id0"/>
+			<target ref="id1"/>
+			<label kind="assignment" x="-527" y="-493">a=0</label>
 		</transition>
 	</template>
 	<template>
 		<name>Workstation</name>
-		<location id="id2" x="-297" y="-263">
+		<declaration>clock a;</declaration>
+		<location id="id11" x="-297" y="-263">
 			<name x="-314" y="-297">Idle</name>
+			<label kind="invariant" x="-280" y="-272">a &lt;= 2</label>
 		</location>
-		<location id="id3" x="-297" y="-136">
-			<name x="-331" y="-110">Working</name>
+		<location id="id12" x="-297" y="-59">
+			<name x="-331" y="-33">Working</name>
 		</location>
-		<location id="id4" x="-204" y="-136">
-			<name x="-179" y="-144">Reconfiguring</name>
+		<location id="id13" x="-204" y="-59">
+			<name x="-178" y="-76">Reconfiguring</name>
+			<label kind="invariant" x="-178" y="-42">a &lt;= 5</label>
 		</location>
-		<init ref="id2"/>
-		<transition id="id5">
-			<source ref="id3"/>
-			<target ref="id2"/>
-			<nail x="-450" y="-136"/>
+		<init ref="id11"/>
+		<transition id="id14">
+			<source ref="id12"/>
+			<target ref="id11"/>
+			<nail x="-450" y="-59"/>
 			<nail x="-450" y="-263"/>
 		</transition>
-		<transition id="id6">
-			<source ref="id4"/>
-			<target ref="id3"/>
+		<transition id="id15">
+			<source ref="id13"/>
+			<target ref="id12"/>
 		</transition>
-		<transition id="id7">
-			<source ref="id2"/>
-			<target ref="id4"/>
+		<transition id="id16">
+			<source ref="id11"/>
+			<target ref="id13"/>
+			<label kind="guard" x="-238" y="-161">i==3</label>
 		</transition>
-		<transition id="id8">
-			<source ref="id2"/>
-			<target ref="id3"/>
-			<label kind="synchronisation" x="-416" y="-212">toWorkstation?</label>
+		<transition id="id17">
+			<source ref="id11"/>
+			<target ref="id12"/>
+			<label kind="guard" x="-340" y="-161">i==1</label>
 		</transition>
 	</template>
 	<template>
 		<name>AGV</name>
-		<location id="id9" x="-297" y="-433">
+		<declaration>clock a;
+</declaration>
+		<location id="id18" x="-297" y="-433">
 			<name x="-314" y="-467">Idle</name>
+			<label kind="invariant" x="-272" y="-442">a&lt;=2</label>
 		</location>
-		<location id="id10" x="-365" y="-289">
-			<name x="-450" y="-297">Working</name>
+		<location id="id19" x="-297" y="-196">
+			<name x="-272" y="-204">Working</name>
+			<label kind="invariant" x="-314" y="-170">a&lt;=5</label>
 		</location>
-		<location id="id11" x="-229" y="-289">
-			<name x="-212" y="-297">Charging</name>
+		<location id="id20" x="-297" y="-297">
+			<name x="-280" y="-306">ReceiveMessage</name>
+			<committed/>
 		</location>
-		<init ref="id9"/>
-		<transition id="id12">
-			<source ref="id11"/>
-			<target ref="id10"/>
-			<nail x="-229" y="-221"/>
-			<nail x="-365" y="-221"/>
-		</transition>
-		<transition id="id13">
-			<source ref="id11"/>
-			<target ref="id9"/>
-		</transition>
-		<transition id="id14">
-			<source ref="id10"/>
-			<target ref="id11"/>
-		</transition>
-		<transition id="id15">
-			<source ref="id9"/>
-			<target ref="id10"/>
-			<label kind="synchronisation" x="-391" y="-374">toAGV?</label>
-		</transition>
-	</template>
-	<template>
-		<name>FaultDetection</name>
-		<location id="id16" x="-161" y="-323">
-			<name x="-178" y="-357">Idle</name>
-		</location>
-		<location id="id17" x="-161" y="-246">
-			<name x="-263" y="-255">HeartBeat</name>
-		</location>
-		<location id="id18" x="-161" y="-161">
-			<name x="-331" y="-170">HeartbeatRegistry</name>
-		</location>
-		<location id="id19" x="-51" y="-161">
-			<name x="-25" y="-170">ExceptionHandling</name>
-		</location>
-		<init ref="id16"/>
-		<transition id="id20">
-			<source ref="id19"/>
-			<target ref="id16"/>
-			<nail x="-51" y="-323"/>
-		</transition>
+		<init ref="id18"/>
 		<transition id="id21">
-			<source ref="id18"/>
-			<target ref="id19"/>
+			<source ref="id19"/>
+			<target ref="id18"/>
+			<label kind="synchronisation" x="-527" y="-297">doneAGVBus!</label>
+			<label kind="assignment" x="-637" y="-323">a=0</label>
+			<nail x="-425" y="-195"/>
+			<nail x="-425" y="-433"/>
 		</transition>
 		<transition id="id22">
-			<source ref="id17"/>
-			<target ref="id18"/>
+			<source ref="id20"/>
+			<target ref="id19"/>
+			<label kind="assignment" x="-289" y="-263">a=0, isAGVWorking=true</label>
 		</transition>
 		<transition id="id23">
-			<source ref="id16"/>
-			<target ref="id17"/>
+			<source ref="id18"/>
+			<target ref="id20"/>
+			<label kind="guard" x="-289" y="-399">a&gt;=2</label>
+			<label kind="synchronisation" x="-289" y="-382">startAGVBus?</label>
 		</transition>
 	</template>
 	<template>
 		<name x="5" y="5">Orchestrator</name>
 		<declaration>// Place local declarations here.
 
-clock a;
-</declaration>
-		<location id="id24" x="153" y="-246">
-			<name x="136" y="-280">Idle</name>
+clock a;</declaration>
+		<location id="id24" x="-136" y="-204">
+			<name x="-170" y="-238">Listening</name>
+			<label kind="invariant" x="-221" y="-238">a&lt;=5</label>
 		</location>
-		<location id="id25" x="153" y="76">
-			<name x="93" y="68">Order</name>
+		<location id="id25" x="-136" y="-17">
+			<name x="-238" y="-8">ReceiveMsg</name>
+			<label kind="invariant" x="-110" y="-26">a&lt;=2</label>
 		</location>
-		<location id="id26" x="17" y="76">
-			<name x="-93" y="68">Acknowledge</name>
+		<location id="id26" x="-136" y="102">
+			<name x="-195" y="93">Order</name>
+			<label kind="invariant" x="-110" y="93">a&lt;=2</label>
 		</location>
-		<location id="id27" x="297" y="76">
-			<name x="229" y="68">Fault</name>
+		<location id="id27" x="-136" y="246">
+			<name x="-178" y="237">AGV</name>
+			<committed/>
 		</location>
-		<location id="id28" x="297" y="212">
-			<name x="212" y="204">Recover</name>
+		<location id="id28" x="-136" y="390">
+			<name x="-255" y="382">Workstation</name>
+			<committed/>
 		</location>
-		<location id="id29" x="17" y="212">
-			<name x="0" y="229">Log</name>
-		</location>
-		<location id="id30" x="153" y="331">
-			<name x="111" y="323">Bus</name>
-		</location>
-		<location id="id31" x="153" y="-102">
-			<name x="59" y="-127">ReceiveMsg</name>
+		<location id="id29" x="-340" y="-17">
+			<name x="-442" y="-25">AGVDone</name>
+			<label kind="invariant" x="-350" y="0">a&lt;=2</label>
 		</location>
 		<init ref="id24"/>
-		<transition id="id32">
-			<source ref="id31"/>
-			<target ref="id27"/>
-			<label kind="guard" x="204" y="-34">msgType==2</label>
-			<nail x="297" y="-102"/>
-		</transition>
-		<transition id="id33">
-			<source ref="id31"/>
-			<target ref="id26"/>
-			<label kind="guard" x="-76" y="-34">msgType==0</label>
-			<nail x="17" y="-102"/>
-		</transition>
-		<transition id="id34">
-			<source ref="id31"/>
-			<target ref="id25"/>
-			<label kind="guard" x="68" y="-34">msgType==1</label>
-		</transition>
-		<transition id="id35">
-			<source ref="id30"/>
-			<target ref="id24"/>
-			<nail x="391" y="331"/>
-			<nail x="391" y="-246"/>
-		</transition>
-		<transition id="id36">
-			<source ref="id28"/>
-			<target ref="id30"/>
-		</transition>
-		<transition id="id37">
+		<transition id="id30">
 			<source ref="id25"/>
-			<target ref="id30"/>
+			<target ref="id29"/>
+			<label kind="synchronisation" x="-272" y="-42">doneAGVOrc?</label>
+			<label kind="assignment" x="-238" y="-59">a=0</label>
 		</transition>
-		<transition id="id38">
+		<transition id="id31">
 			<source ref="id29"/>
 			<target ref="id24"/>
-			<nail x="-119" y="212"/>
-			<nail x="-119" y="-246"/>
+			<label kind="assignment" x="-374" y="-127">a=0</label>
+			<nail x="-340" y="-204"/>
 		</transition>
-		<transition id="id39">
-			<source ref="id24"/>
-			<target ref="id31"/>
-			<label kind="select" x="8" y="-187">msgType:int[0,2]</label>
+		<transition id="id32">
+			<source ref="id28"/>
+			<target ref="id24"/>
+			<label kind="assignment" x="59" y="85">a=0</label>
+			<nail x="94" y="390"/>
+			<nail x="94" y="-204"/>
 		</transition>
-		<transition id="id40">
+		<transition id="id33">
 			<source ref="id27"/>
 			<target ref="id28"/>
 		</transition>
-		<transition id="id41">
+		<transition id="id34">
 			<source ref="id26"/>
-			<target ref="id29"/>
+			<target ref="id27"/>
+			<label kind="synchronisation" x="-127" y="169">startAGVOrc!</label>
+			<label kind="assignment" x="-127" y="187">isAGVWorking=true</label>
+		</transition>
+		<transition id="id35">
+			<source ref="id25"/>
+			<target ref="id26"/>
+		</transition>
+		<transition id="id36">
+			<source ref="id24"/>
+			<target ref="id25"/>
+			<label kind="select" x="-119" y="-144">selectMsgType:int[0,1]</label>
+			<label kind="guard" x="-127" y="-119">!isAGVWorking</label>
 		</transition>
 	</template>
 	<system>// Place template instantiations here.
-Process1 = Warehouse();
-Process2 = AGV();
-Process3 = FaultDetection();
+Process1 = AGVBusTopic();
+Process2 = Workstation();
+Process3 = AGV();
 Process4 = Orchestrator();
 
 // List one or more processes to be composed into a system.
-system Warehouse, Workstation, AGV, FaultDetection, Orchestrator;
+system AGVBusTopic, Workstation, AGV, Orchestrator;
 
 </system>
 	<queries>
